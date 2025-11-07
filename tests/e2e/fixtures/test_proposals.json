@@ -1,0 +1,55 @@
+{
+  "validUser": {
+    "email": "test@example.com",
+    "password": "SecurePassword123!"
+  },
+  "newProposal": {
+    "title": "AI Research Initiative",
+    "mission": "Advancing artificial intelligence research for societal benefit",
+    "opportunity": "NSF Research Grant",
+    "expectedKeywords": ["artificial intelligence", "research", "societal benefit"]
+  },
+  "germanProposal": {
+    "mission": "Fortschrittliche Forschung im Bereich künstlicher Intelligenz zum Wohle der Gesellschaft",
+    "expectedKeywords": ["künstliche Intelligenz", "Forschung", "Gesellschaft"]
+  },
+  "formalProposal": {
+    "mission": "To conduct rigorous scientific research that addresses critical societal challenges through innovative methodologies and interdisciplinary collaboration.",
+    "expectedTone": "formal"
+  },
+  "technicalProposal": {
+    "mission": "Implementation of advanced machine learning algorithms for predictive modeling of climate change impacts using distributed computing infrastructure.",
+    "expectedTone": "technical"
+  },
+  "largeProposal": {
+    "mission": "This comprehensive research initiative will address multiple interconnected challenges including climate change adaptation, sustainable energy systems, public health infrastructure, educational equity, economic development, social justice, technological innovation, environmental conservation, food security, and water resource management through a multi-disciplinary approach that integrates quantitative analysis with qualitative assessment methodologies while leveraging cutting-edge computational tools and fostering international collaboration across diverse stakeholder groups to achieve measurable impact at local, regional, and global scales."
+  },
+  "submissionProposal": {
+    "mission": "Research on sustainable development practices",
+    "recipient": "grant.committee@example.com"
+  },
+  "pdfProposal": {
+    "mission": "Innovative approaches to renewable energy storage",
+    "keywords": ["renewable energy", "storage", "innovation"]
+  },
+  "analyticsProposal": {
+    "mission": "Data-driven analysis of educational outcomes",
+    "recipient": "analytics@education.org"
+  },
+  "mismatchedProposal": {
+    "mission": "I'm so excited about this wonderful opportunity to make a positive difference in our community through heartfelt collaboration and shared vision!",
+    "expectedTone": "emotional"
+  },
+  "germanVoice": {
+    "mission": "Ein innovatives Forschungsprojekt zur Entwicklung nachhaltiger Energietechnologien für eine bessere Zukunft."
+  },
+  "voiceProposal": {
+    "mission": "Research on climate change adaptation strategies for coastal communities"
+  },
+  "voiceControls": {
+    "mission": "Testing audio playback controls and settings"
+  },
+  "voiceDownload": {
+    "mission": "Proposal for downloading audio files"
+  }
+}

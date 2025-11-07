@@ -1,0 +1,137 @@
+// 🌐 Multi-database compatible schema (MongoDB + SQLite)
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
+}
+
+datasource db {
+  provider = env("DATABASE_PROVIDER")
+  url      = env("DATABASE_URL")
+}
+
+// 🧑 User Management
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  email         String    @unique
+  password      String?   // Only for local auth
+  googleId      String?   @unique
+  name          String
+  role          UserRole  @default(USER)
+  createdAt     DateTime  @default(now())
+  lastLogin     DateTime?
+  preferences   Json?     // Theme, language, notification settings
+  proposals     Proposal[]
+  grants        Grant[]
+  usageMetrics  UsageMetrics?
+
+  @@index([email])
+  @@index([role])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  PREMIUM
+}
+
+// 📑 Proposal Management
+model Proposal {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  content       String   // Markdown content
+  htmlContent   String?  // Generated HTML version
+  status        ProposalStatus @default(DRAFT)
+  language      String   @default("en")
+  toneAnalysis  Json?    // Tone classification results
+  budget        Json?    // Budget breakdown
+  deadline      DateTime
+  opportunity   Grant?   @relation(fields: [opportunityId], references: [id])
+  opportunityId String?
+  author        User     @relation(fields: [authorId], references: [id])
+  authorId      String   @db.ObjectId
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  submittedAt   DateTime?
+  voiceUrl      String?  // URL to audio version
+  duplicateOf   String?  // ID of original proposal if duplicate detected
+  
+  @@index([status])
+  @@index([deadline])
+  @@index([authorId])
+}
+
+enum ProposalStatus {
+  DRAFT
+  REVIEW
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+  ARCHIVED
+}
+
+// 💰 Grant Opportunities
+model Grant {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String
+  url           String   @unique
+  deadline      DateTime
+  amount        Float?
+  currency      String   @default("USD")
+  organization  String
+  eligibility   String[]
+  categories    String[]
+  language      String   @default("en")
+  source        String   // Source portal (e.g., "NSF", "Horizon Europe")
+  lastCrawled   DateTime @default(now())
+  proposals     Proposal[]
+  
+  @@index([deadline])
+  @@index([source])
+  @@index([categories])
+}
+
+// 📊 Usage Tracking
+model UsageMetrics {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   @unique @db.ObjectId
+  user          User     @relation(fields: [userId], references: [id])
+  proposalsGenerated Int   @default(0)
+  wordsGenerated    Int   @default(0)
+  tokensUsed        Int   @default(0)
+  lastActivity      DateTime @default(now())
+  monthlyUsage      Json?  // { "2024-05": 42, "2024-06": 87 }
+  
+  @@index([userId])
+}
+
+// 🔐 Session Management (for JWT rotation)
+model Session {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   @db.ObjectId
+  user          User     @relation(fields: [userId], references: [id])
+  token         String   @unique
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+  ipAddress     String?
+  userAgent     String?
+  revoked       Boolean  @default(false)
+  
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// 🧪 Chaos Testing Results
+model ChaosTestResult {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  testName      String
+  failureType   String
+  timestamp     DateTime @default(now())
+  duration      Int      // ms
+  recovered     Boolean
+  recoveryTime  Int?     // ms
+  metadata      Json?
+  
+  @@index([testName])
+  @@index([timestamp])
+}

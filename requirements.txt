@@ -1,0 +1,28 @@
+# === Core AI & Vector Database ===
+chromadb==0.5.5
+langchain==0.2.0
+langchain-core>=0.2.0
+langchain-community>=0.2.0
+sentence-transformers>=3.0.0
+tiktoken>=0.7.0
+openai>=1.0.0
+
+# === Text-to-Speech ===
+google-cloud-texttospeech==2.17.0
+
+# === Data + Utils ===
+pandas>=2.0.0
+numpy>=1.26.0
+requests>=2.31.0
+pydantic>=2.7.0
+python-dotenv>=1.0.1
+
+# === FastAPI Server (if you expose endpoints) ===
+fastapi>=0.111.0
+uvicorn>=0.30.0
+
+# === Optional Developer Tools ===
+setuptools>=70.0.0
+wheel>=0.43.0
+setuptools-rust>=1.10.0
+pytest>=7.4.0

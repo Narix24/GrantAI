@@ -1,0 +1,86 @@
+{
+  "name": "Grant-AI",
+  "short_name": "GrantAI",
+  "description": "Intelligent Proposal Generation Engine",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard-dark.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard - Dark Mode"
+    },
+    {
+      "src": "/screenshots/dashboard-light.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard - Light Mode"
+    },
+    {
+      "src": "/screenshots/mobile-dashboard.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile Dashboard"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.grantai.app",
+      "id": "com.grantai.app"
+    }
+  ],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "New Proposal",
+      "short_name": "New",
+      "description": "Create a new grant proposal",
+      "url": "/proposals/new",
+      "icons": [{ "src": "/icons/shortcut-new.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Discover Grants",
+      "short_name": "Discover",
+      "description": "Find new grant opportunities",
+      "url": "/grants",
+      "icons": [{ "src": "/icons/shortcut-discover.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "System Health",
+      "short_name": "Health",
+      "description": "View system health and metrics",
+      "url": "/system/health",
+      "icons": [{ "src": "/icons/shortcut-health.png", "sizes": "192x192" }]
+    }
+  ]
+}

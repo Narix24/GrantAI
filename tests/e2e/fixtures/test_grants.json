@@ -1,0 +1,54 @@
+{
+  "validUser": {
+    "email": "test@example.com",
+    "password": "SecurePassword123!"
+  },
+  "testSources": ["NSF", "Horizon Europe", "Wellcome Trust"],
+  "discoveryConfig": {
+    "deadlineFrom": "2025-01-01",
+    "deadlineTo": "2025-12-31",
+    "amountMin": "10000",
+    "amountMax": "100000"
+  },
+  "sampleGrants": [
+    {
+      "title": "NSF Research Grant",
+      "description": "Funding for innovative research projects in STEM fields",
+      "deadline": "2025-06-15",
+      "amount": 75000,
+      "currency": "USD",
+      "organization": "National Science Foundation",
+      "categories": ["research", "stem", "innovation"],
+      "language": "en",
+      "source": "NSF",
+      "lastCrawled": "2025-11-01T12:00:00Z"
+    },
+    {
+      "title": "Horizon Europe Climate Initiative",
+      "description": "Funding for climate change mitigation and adaptation projects",
+      "deadline": "2025-09-30",
+      "amount": 150000,
+      "currency": "EUR",
+      "organization": "European Commission",
+      "categories": ["climate", "sustainability", "research"],
+      "language": "en",
+      "source": "Horizon Europe",
+      "lastCrawled": "2025-11-01T14:30:00Z"
+    },
+    {
+      "title": "Wellcome Trust Health Research",
+      "description": "Funding for biomedical research and health innovation",
+      "deadline": "2025-03-20",
+      "amount": 120000,
+      "currency": "GBP",
+      "organization": "Wellcome Trust",
+      "categories": ["health", "biomedical", "research"],
+      "language": "en",
+      "source": "Wellcome Trust",
+      "lastCrawled": "2025-11-01T16:45:00Z"
+    }
+  ],
+  "reminderConfig": {
+    "remindAt": "2025-06-01T09:00"
+  }
+}

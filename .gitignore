@@ -1,0 +1,17 @@
+echo "node_modules/
+.DS_Store
+.env
+.env.test
+coverage/
+test-results/
+logs/
+public/audio/
+public/screenshots/
+__mocks__/
+jest.config.ts
+dist/
+build/
+*.log
+*.sqlite
+*.sqlite3
+.DS_Store

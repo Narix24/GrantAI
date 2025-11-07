@@ -1,0 +1,131 @@
+version: '3.8'
+
+services:
+  # 🧠 Main Application
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_PROVIDER=mongodb
+      - DATABASE_URL=mongodb://mongodb:27017/grant_ai
+      - REDIS_HOST=redis
+      - CHROMA_URL=http://chroma:8000
+      - SMTP_HOST=mailer
+      - SMTP_PORT=1025
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/gcp.json
+    volumes:
+      - ./secrets/gcp.json:/app/secrets/gcp.json:ro
+      - ./public/audio:/app/public/audio
+    depends_on:
+      - mongodb
+      - redis
+      - chroma
+      - mailer
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # 🌐 Frontend
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://backend:3000
+    depends_on:
+      - backend
+
+  # 🗃️ MongoDB Database
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    command: mongod --bind_ip_all --wiredTigerCacheSizeGB 0.5
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ⚡ Redis for Queues
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 60 1 --loglevel warning
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # 🧬 Vector Database
+  chroma:
+    image: chromadb/chroma:0.4.22
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - CHROMA_SERVER_HTTP_PORT=8000
+      - CHROMA_LOG_LEVEL=INFO
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8000/api/v1/heartbeat || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 📧 Development Mail Server
+  mailer:
+    image: maildev/maildev
+    ports:
+      - "1080:1080"  # Web interface
+      - "1025:1025"  # SMTP server
+    healthcheck:
+      test: curl -f http://localhost:1080 || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # 🌐 Nginx Reverse Proxy
+  proxy:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./secrets/ssl:/etc/ssl:ro
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  mongodb_data:
+  redis_data:
+  chroma_data:
+  ssl_certs:

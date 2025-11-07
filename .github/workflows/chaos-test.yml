@@ -1,0 +1,126 @@
+name: Chaos Engineering Tests
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # Every Monday at 2 AM UTC
+  workflow_dispatch:
+
+env:
+  CHAOS_LEVEL: AGGRESSIVE
+  NODE_VERSION: 20
+
+jobs:
+  chaos-test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6
+        ports:
+          - 27017:27017
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+      chromadb:
+        image: chromadb/chroma:0.4.22
+        ports:
+          - 8000:8000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure environment
+        run: |
+          echo "CHAOS_ENABLED=true" >> .env
+          echo "CHAOS_LEVEL=${{ env.CHAOS_LEVEL }}" >> .env
+          echo "MONGODB_URI=mongodb://localhost:27017/grant_ai" >> .env
+          echo "REDIS_HOST=localhost" >> .env
+          echo "CHROMA_URL=http://localhost:8000" >> .env
+
+      - name: Start application
+        run: npm start &
+        env:
+          PORT: 3000
+
+      - name: Wait for server readiness
+        run: |
+          for i in {1..30}; do
+            sleep 2
+            curl -f http://localhost:3000/health && exit 0
+          done
+          exit 1
+
+      - name: Run chaos experiments
+        run: |
+          # Experiment 1: Database disconnection
+          curl -X POST http://localhost:3000/api/system/chaos-trigger \
+            -H "Authorization: Bearer $ADMIN_TOKEN" \
+            -d '{"experimentType": "db_disconnect", "duration": 30}'
+          
+          # Wait for recovery
+          sleep 60
+          
+          # Verify system health
+          curl -f http://localhost:3000/health
+          
+          # Experiment 2: AI provider failure
+          curl -X POST http://localhost:3000/api/system/chaos-trigger \
+            -H "Authorization: Bearer $ADMIN_TOKEN" \
+            -d '{"experimentType": "provider_failure", "duration": 45}'
+          
+          # Generate test proposal during failure
+          curl -X POST http://localhost:3000/api/proposals/generate \
+            -H "Authorization: Bearer $USER_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"opportunity": {"title": "Test Grant", "description": "Test"}, "missionStatement": "Test mission"}'
+          
+          # Wait for recovery
+          sleep 90
+          
+          # Experiment 3: Full system overload
+          curl -X POST http://localhost:3000/api/system/chaos-trigger \
+            -H "Authorization: Bearer $ADMIN_TOKEN" \
+            -d '{"experimentType": "cpu_spike", "duration": 60}'
+          
+          # Monitor recovery
+          sleep 120
+          
+          # Final health check
+          curl -f http://localhost:3000/health
+        env:
+          ADMIN_TOKEN: ${{ secrets.CHAOS_ADMIN_TOKEN }}
+          USER_TOKEN: ${{ secrets.CHAOS_USER_TOKEN }}
+
+      - name: Generate chaos report
+        run: |
+          npm run chaos-report -- --output=chaos-report.json
+          cat chaos-report.json
+
+      - name: Upload chaos report
+        uses: actions/upload-artifact@v3
+        with:
+          name: chaos-report-${{ github.sha }}
+          path: chaos-report.json
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Chaos Test Failed',
+              body: `Chaos engineering test failed for commit ${{ github.sha }}. See artifact for details.`,
+              labels: ['chaos-test', 'failed']
+            })

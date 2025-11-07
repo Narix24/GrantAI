@@ -1,0 +1,115 @@
+﻿Full Project File Tracker
+Generated: 2025-11-02 19:12:04
+Root: D:\Grant-AI
+==============================================================
+.
+  .env.example                                    [❌ empty]                (2025-11-02 18:48:16)
+  create-grant-ai-structure.ps1                   [✅ done]                 (2025-11-02 18:47:59)
+  organize-project.ps1                            [✅ done]                 (2025-11-02 18:37:47)
+  README.md                                       [❌ empty]                (2025-11-02 18:48:16)
+  update-backend.ps1                              [✅ done]                 (2025-11-02 19:02:56)
+  update-full-project.ps1                         [✅ done]                 (2025-11-02 19:07:08)
+
+.devcontainer/
+  devcontainer.json                               [❌ empty]                (2025-11-02 18:48:16)
+  Dockerfile                                      [❌ empty]                (2025-11-02 18:48:16)
+
+backend/
+  server.js                                       [❌ empty]                (2025-11-02 18:48:16)
+
+docker/
+  docker-compose.yml                              [❌ empty]                (2025-11-02 18:48:16)
+  Dockerfile                                      [❌ empty]                (2025-11-02 18:48:16)
+  nginx.conf                                      [❌ empty]                (2025-11-02 18:48:16)
+
+frontend/
+  App.jsx                                         [❌ empty]                (2025-11-02 18:48:16)
+
+.github\workflows/
+  cd.yml                                          [❌ empty]                (2025-11-02 18:48:16)
+  chaos-test.yml                                  [❌ empty]                (2025-11-02 18:48:16)
+  ci.yml                                          [❌ empty]                (2025-11-02 18:48:16)
+
+backend\agents/
+  GrantCrawlerAgent.js                            [❌ empty]                (2025-11-02 18:48:16)
+  ProposalWriterAgent.js                          [❌ empty]                (2025-11-02 18:48:16)
+  ToneAnalyzerAgent.js                            [❌ empty]                (2025-11-02 18:48:16)
+  VoicePlaybackAgent.js                           [❌ empty]                (2025-11-02 18:48:16)
+
+backend\config/
+  ai.config.js                                    [❌ empty]                (2025-11-02 18:48:16)
+  bullmq.config.js                                [❌ empty]                (2025-11-02 18:48:16)
+  chaos.config.js                                 [❌ empty]                (2025-11-02 18:48:16)
+  db.config.js                                    [❌ empty]                (2025-11-02 18:48:16)
+  i18n.config.js                                  [❌ empty]                (2025-11-02 18:48:16)
+
+backend\locales/
+  de.json                                         [❌ empty]                (2025-11-02 18:48:16)
+  en.json                                         [❌ empty]                (2025-11-02 18:48:16)
+  es.json                                         [❌ empty]                (2025-11-02 18:48:16)
+  fr.json                                         [❌ empty]                (2025-11-02 18:48:16)
+  it.json                                         [❌ empty]                (2025-11-02 18:48:16)
+  nl.json                                         [❌ empty]                (2025-11-02 18:48:16)
+  pl.json                                         [❌ empty]                (2025-11-02 18:48:16)
+  pt.json                                         [❌ empty]                (2025-11-02 18:48:16)
+  ro.json                                         [❌ empty]                (2025-11-02 18:48:16)
+  ru.json                                         [❌ empty]                (2025-11-02 18:48:16)
+
+backend\orchestration/
+  chaosMonkey.js                                  [❌ empty]                (2025-11-02 18:48:16)
+  queue.js                                        [❌ empty]                (2025-11-02 18:48:16)
+  recoveryOrchestrator.js                         [❌ empty]                (2025-11-02 18:48:16)
+  scraperWorker.js                                [❌ empty]                (2025-11-02 18:48:16)
+  submitterWorker.js                              [❌ empty]                (2025-11-02 18:48:16)
+  writerWorker.js                                 [❌ empty]                (2025-11-02 18:48:16)
+
+backend\prisma/
+  schema.prisma                                   [❌ empty]                (2025-11-02 18:48:16)
+
+backend\routes/
+  auth.js                                         [❌ empty]                (2025-11-02 18:48:16)
+  grants.js                                       [❌ empty]                (2025-11-02 18:48:16)
+  proposals.js                                    [❌ empty]                (2025-11-02 18:48:16)
+  system.js                                       [❌ empty]                (2025-11-02 18:48:16)
+
+backend\services/
+  aiService.js                                    [❌ empty]                (2025-11-02 18:48:16)
+  dbRouter.js                                     [❌ empty]                (2025-11-02 18:48:16)
+  emailService.js                                 [❌ empty]                (2025-11-02 18:48:16)
+  langchainService.js                             [❌ empty]                (2025-11-02 18:48:16)
+
+backend\utils/
+  logger.js                                       [❌ empty]                (2025-11-02 18:48:16)
+  metrics.js                                      [❌ empty]                (2025-11-02 18:48:16)
+  security.js                                     [❌ empty]                (2025-11-02 18:48:16)
+
+frontend\context/
+  AuthContext.jsx                                 [❌ empty]                (2025-11-02 18:48:16)
+  ThemeContext.jsx                                [❌ empty]                (2025-11-02 18:48:16)
+  WebSocketContext.jsx                            [❌ empty]                (2025-11-02 18:48:16)
+
+frontend\public/
+  manifest.json                                   [❌ empty]                (2025-11-02 18:48:16)
+
+frontend\styles/
+  globals.css                                     [❌ empty]                (2025-11-02 18:48:16)
+  theme.js                                        [❌ empty]                (2025-11-02 18:48:16)
+
+backend\services\vectorStore/
+  chroma.js                                       [❌ empty]                (2025-11-02 18:48:16)
+
+frontend\components\kpi/
+  KPIDashboard.jsx                                [❌ empty]                (2025-11-02 18:48:16)
+  RealTimeMetrics.jsx                             [❌ empty]                (2025-11-02 18:48:16)
+
+frontend\components\proposal/
+  ProposalBuilder.jsx                             [❌ empty]                (2025-11-02 18:48:16)
+  ToneAnalyzer.jsx                                [❌ empty]                (2025-11-02 18:48:16)
+  VoicePlayback.jsx                               [❌ empty]                (2025-11-02 18:48:16)
+
+frontend\components\system/
+  ChaosControls.jsx                               [❌ empty]                (2025-11-02 18:48:16)
+  HealthMonitor.jsx                               [❌ empty]                (2025-11-02 18:48:16)
+
+==============================================================
+Progress: 4 / 67 files contain meaningful content.

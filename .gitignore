@@ -1,19 +1,25 @@
-echo "node_modules/
-.DS_Store
-.env
-.env.test
+# Node.js
+node_modules/
+dist/
+build/
 coverage/
 test-results/
 logs/
+*.log
+
+# Python
+venv/
+__pycache__/
+*.sqlite
+*.sqlite3
+
+# Environment & system files
+.env
+.env.test
+.DS_Store
+
+# App-specific
 public/audio/
 public/screenshots/
 __mocks__/
 jest.config.ts
-dist/
-build/
-*.log
-*.sqlite
-*.sqlite3
-.DS_Store
-node_modules
-node_modules

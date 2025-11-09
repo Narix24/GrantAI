@@ -1,34 +1,25 @@
-# === System ===
-.DS_Store
-Thumbs.db
-*.log
-*.tmp
-
-# === Node ===
+# Node.js
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 dist/
 build/
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# === Editor ===
-.vscode/
-.idea/
-*.sublime-workspace
-*.sublime-project
-
-# === OS caches ===
-*.swp
-*.swo
-*.bak
-
-# === Test / Coverage ===
 coverage/
-jest-cache/
-.cache/
+test-results/
+logs/
+*.log
+
+# Python
+venv/
+__pycache__/
+*.sqlite
+*.sqlite3
+
+# Environment & system files
+.env
+.env.test
+.DS_Store
+
+# App-specific
+public/audio/
+public/screenshots/
+__mocks__/
+jest.config.ts

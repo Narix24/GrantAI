@@ -6,12 +6,14 @@ import { Ollama } from 'ollama';
 class AIService {
   constructor() {
     this.providers = {};
-    this.initializeProviders();
     this.healthStatus = {
       gemini: 'initializing',
       openai: 'initializing',
       ollama: 'initializing'
     };
+    this.lastFailure = {}; // track last failure timestamps for circuit breaker
+    this.cooldownMs = 30000; // 30-second cooldown
+    this.initializeProviders();
   }
 
   initializeProviders() {
@@ -37,8 +39,8 @@ class AIService {
   async testProvider(provider) {
     try {
       const testPrompt = 'Respond with "OK" for health check';
-      const result = await this.generate({ 
-        prompt: testPrompt, 
+      const result = await this.generate({
+        prompt: testPrompt,
         provider,
         model: provider === 'ollama' ? 'llama3' : undefined
       });
@@ -50,33 +52,37 @@ class AIService {
   }
 
   async generate({ prompt, context = [], language = 'en', provider = 'auto', model }) {
-    // 🌍 Language-aware prompt engineering
-    const localizedPrompt = await import(`../locales/${language}.js`).then(locale => 
-      locale.enhancePrompt(prompt, context)
-    );
+    // 🌍 Safe dynamic locale import (Windows-friendly)
+    let enhancePrompt = (p) => p;
+    try {
+      const locale = await import(`../locales/${language}.js`);
+      if (locale.enhancePrompt) enhancePrompt = locale.enhancePrompt;
+    } catch {
+      // fallback if locale file missing
+    }
+    const localizedPrompt = await enhancePrompt(prompt, context);
 
-    // 🧠 Smart provider routing
+    // 🧠 Determine active providers
     const activeProviders = Object.entries(this.healthStatus)
       .filter(([_, status]) => status === 'healthy')
-      .map(([provider]) => provider);
+      .map(([p]) => p);
 
     if (provider === 'auto' || !activeProviders.includes(provider)) {
       provider = this.selectOptimalProvider(activeProviders);
     }
 
-    // ⚡ Execution with circuit breaker
+    // ⚡ Circuit breaker & fallback
     try {
-      return await this.executeWithFallback(localizedPrompt, provider, model);
+      return await this.executeWithCooldown(localizedPrompt, provider, model);
     } catch (error) {
       console.error(`🔥 ${provider.toUpperCase()} failed:`, error.message);
       this.healthStatus[provider] = 'degraded';
-      
-      // 🔄 Fallback to next best provider
-      const fallbackProvider = this.selectOptimalProvider(
-        activeProviders.filter(p => p !== provider)
-      );
-      
-      return await this.executeWithFallback(localizedPrompt, fallbackProvider, model);
+
+      const fallbackProviders = activeProviders.filter(p => p !== provider);
+      const fallbackProvider = this.selectOptimalProvider(fallbackProviders);
+      if (!fallbackProvider) throw new Error('No valid AI providers available');
+
+      return await this.executeWithCooldown(localizedPrompt, fallbackProvider, model);
     }
   }
 
@@ -84,6 +90,20 @@ class AIService {
     if (providers.includes('gemini')) return 'gemini';
     if (providers.includes('openai')) return 'openai';
     return providers[0] || 'ollama';
+  }
+
+  async executeWithCooldown(prompt, provider, model) {
+    const lastFail = this.lastFailure[provider] || 0;
+    if (Date.now() - lastFail < this.cooldownMs) {
+      throw new Error('No valid AI providers available');
+    }
+
+    try {
+      return await this.executeWithFallback(prompt, provider, model);
+    } catch (error) {
+      this.lastFailure[provider] = Date.now();
+      throw error;
+    }
   }
 
   async executeWithFallback(prompt, provider, model) {
@@ -99,7 +119,7 @@ class AIService {
     }
   }
 
-  // Provider-specific implementations below...
+  // Provider-specific implementations
   async geminiGenerate(prompt, model) {
     const modelInstance = this.providers.gemini.getGenerativeModel({ model });
     const result = await modelInstance.generateContent(prompt);

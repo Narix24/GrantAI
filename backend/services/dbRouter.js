@@ -1,4 +1,4 @@
-// backend/services/dbRouter.js – Multi-Database Abstraction (Error-Free)
+// backend/services/dbRouter.js – Multi-Database Abstraction (Updated for Windows & Tests)
 import mongoose from "mongoose";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
@@ -20,8 +20,8 @@ class DatabaseRouter {
   async initialize() {
     logger.info("Initializing database connections...");
 
-    // === Try MongoDB if configured ===
-    if (process.env.MONGODB_URI && !process.env.FORCE_SQLITE) {
+    // === MongoDB ===
+    if (process.env.MONGODB_URI && !process.env.USE_SQLITE) {
       try {
         await mongoose.connect(process.env.MONGODB_URI, {
           maxPoolSize: 50,
@@ -44,11 +44,10 @@ class DatabaseRouter {
       }
     }
 
-    // === Always load SQLite fallback ===
+    // === SQLite fallback ===
     try {
       const dbPath =
-        process.env.SQLITE_DB_PATH ||
-        path.join(__dirname, "../../grant_ai.db");
+        process.env.SQLITE_DB_PATH || process.env.SQLITE_PATH || path.join(__dirname, "../../grant_ai.db");
 
       if (!fs.existsSync(path.dirname(dbPath))) {
         fs.mkdirSync(path.dirname(dbPath), { recursive: true });
@@ -64,10 +63,7 @@ class DatabaseRouter {
       this.adapters.sqlite = {
         name: "sqlite",
         get: async (id) =>
-          this.sqliteConnection.get(
-            "SELECT * FROM proposals WHERE id = ?",
-            id
-          ),
+          this.sqliteConnection.get("SELECT * FROM proposals WHERE id = ?", id),
         save: async (proposal) => {
           await this.sqliteConnection.run(
             `INSERT OR REPLACE INTO proposals
@@ -84,7 +80,7 @@ class DatabaseRouter {
           );
         },
         close: async () => {
-          await this.sqliteConnection.close();
+          if (this.sqliteConnection) await this.sqliteConnection.close();
           logger.info("✅ SQLite closed");
         },
         healthCheck: async () => {
@@ -95,6 +91,7 @@ class DatabaseRouter {
             return false;
           }
         },
+        connection: this.sqliteConnection,
       };
 
       logger.info(`✅ SQLite ready at ${dbPath}`);
@@ -103,20 +100,25 @@ class DatabaseRouter {
     }
 
     // === Decide Active Adapter ===
-    if (this.adapters.mongodb?.healthCheck()) {
-      this.currentAdapter = this.adapters.mongodb;
-      logger.info("🗃️ Active DB: MongoDB");
-    } else if (await this.adapters.sqlite?.healthCheck()) {
-      this.currentAdapter = this.adapters.sqlite;
-      logger.info("🗃️ Active DB: SQLite");
-    } else {
-      throw new Error(
-        "No available database adapter. Check MongoDB/SQLite configs."
-      );
+    try {
+      if (this.adapters.mongodb?.healthCheck?.()) {
+        this.currentAdapter = this.adapters.mongodb;
+        logger.info("🗃️ Active DB: MongoDB");
+      } else if (await this.adapters.sqlite?.healthCheck?.()) {
+        this.currentAdapter = this.adapters.sqlite;
+        logger.info("🗃️ Active DB: SQLite");
+      } else {
+        throw new Error("No available database adapter. Check MongoDB/SQLite configs.");
+      }
+    } catch (err) {
+      logger.error("❌ Database selection failed:", err);
+      throw err;
     }
   }
 
   async _createTables(conn) {
+    if (!conn) return;
+
     await conn.exec(`
       CREATE TABLE IF NOT EXISTS proposals (
         id TEXT PRIMARY KEY,
@@ -157,10 +159,26 @@ class DatabaseRouter {
   }
 
   getAdapter() {
-    if (!this.currentAdapter) {
-      logger.warn("⚠️ No adapter active, falling back to SQLite.");
+    // MongoDB health degraded
+    if (this.adapters.mongodb && !this.adapters.mongodb.healthCheck()) {
+      if (this.adapters.sqlite) {
+        console.warn("MongoDB degraded - switching to SQLite");
+        this.currentAdapter = this.adapters.sqlite;
+      }
+    } 
+    // MongoDB recovered
+    else if (this.adapters.mongodb && this.adapters.mongodb.healthCheck()) {
+      if (this.currentAdapter !== this.adapters.mongodb) {
+        console.info("MongoDB connection restored");
+      }
+      this.currentAdapter = this.adapters.mongodb;
+    } 
+    // Fallback if no current adapter
+    else if (!this.currentAdapter) {
+      console.warn("No adapter active, falling back to SQLite.");
       this.currentAdapter = this.adapters.sqlite;
     }
+
     return this.currentAdapter;
   }
 

@@ -1,39 +1,55 @@
-// backend/utils/logger.js
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
 const { combine, timestamp, label, printf, colorize, json } = winston.format;
 
-// 🏷️ Custom format for console output
+// 🔧 Safe stringify (handles circular refs)
+function safeStringify(obj) {
+  const seen = new WeakSet();
+  return JSON.stringify(
+    obj,
+    (key, value) => {
+      if (typeof value === 'object' && value !== null) {
+        if (seen.has(value)) return '[Circular]';
+        seen.add(value);
+      }
+      if (value instanceof Error) {
+        return { message: value.message, stack: value.stack };
+      }
+      return value;
+    },
+    2
+  );
+}
+
+// 🏷️ Console format
 const consoleFormat = printf(({ level, message, label, timestamp, correlationId, ...metadata }) => {
   let msg = `${timestamp} [${label}] ${level}: ${message}`;
   if (correlationId) msg += ` | CorrelationID: ${correlationId}`;
-  if (Object.keys(metadata).length > 0) {
-    msg += `\n${JSON.stringify(metadata, null, 2)}`;
-  }
+  if (Object.keys(metadata).length > 0) msg += `\n${safeStringify(metadata)}`;
   return msg;
 });
 
-// 📦 JSON format for file logging
+// 📦 File format
 const fileFormat = combine(timestamp(), json());
 
-// 🌐 Correlation ID middleware
+// 🌐 Correlation middleware
 export const correlationMiddleware = (req, res, next) => {
-  req.correlationId = req.headers['x-correlation-id'] || uuidv4();
-  res.setHeader('X-Correlation-ID', req.correlationId);
+  const existing = req.headers['x-correlation-id'];
+  const id = existing || uuidv4();
+  req.correlationId = id;
+  res.setHeader('X-Correlation-ID', id);
   next();
 };
 
-// 🏗️ Logger configuration
-const logger = winston.createLogger({
+// 🏗️ Winston logger
+const baseLogger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   defaultMeta: { service: 'grant-ai' },
   transports: [
     new winston.transports.Console({
       format: combine(label({ label: 'Grant-AI' }), colorize(), consoleFormat),
-      handleExceptions: true,
-      handleRejections: true,
     }),
     new DailyRotateFile({
       filename: 'logs/grant-ai-%DATE%.log',
@@ -42,79 +58,63 @@ const logger = winston.createLogger({
       maxSize: '20m',
       maxFiles: '14d',
       format: fileFormat,
-      handleExceptions: true,
-      handleRejections: true,
     }),
   ],
   exitOnError: false,
 });
 
-// 🚨 Exception handling
-process.on('uncaughtException', (error) => {
-  logger.error('UNCAUGHT EXCEPTION', error);
-  import('../orchestration/recoveryOrchestrator.js')
-    .then(({ recoveryOrchestrator }) => {
-      recoveryOrchestrator.triggerRecovery(error, { type: 'uncaught_exception' });
-    })
-    .catch(() => {});
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('UNHANDLED REJECTION', { reason, promise });
-});
-
-// 🧵 Request-scoped logging stream for middleware like morgan
-logger.stream = {
-  write: (message) => logger.info(message.trim()),
+// 🧱 Logger wrapper with test-friendly proxies
+export const logger = {
+  info: (message, meta = {}) => {
+    const cleaned = JSON.parse(safeStringify(meta));
+    winston.Logger.prototype.info(message, cleaned);
+  },
+  error: (message, meta = {}) => {
+    const cleaned = JSON.parse(safeStringify(meta));
+    if (meta?.error instanceof Error) {
+      cleaned.error = meta.error.message;
+      cleaned.stack = meta.error.stack;
+    }
+    winston.Logger.prototype.error(message, cleaned);
+  },
+  stream: {
+    write: (message) => winston.Logger.prototype.info(message.trim()),
+  },
+  performance: (req, res, next) => {
+    const start = process.hrtime.bigint();
+    res.on('finish', () => {
+      const duration = Number(process.hrtime.bigint() - start) / 1e6;
+      logger.info(`${req.method} ${req.url}`, {
+        correlationId: req.correlationId,
+        duration,
+        statusCode: res.statusCode,
+      });
+    });
+    next();
+  },
 };
 
-// 📊 Performance logging middleware
-export const logPerformance = (req, res, next) => {
-  const start = process.hrtime.bigint();
-
-  res.on('finish', () => {
-    const end = process.hrtime.bigint();
-    const duration = Number(end - start) / 1e6; // Convert nanoseconds to milliseconds
-
-    logger.info(`${req.method} ${req.url}`, {
-      correlationId: req.correlationId,
-      duration: `${duration.toFixed(2)}ms`,
-      statusCode: res.statusCode,
-      userAgent: req.headers['user-agent'],
-      ip: req.ip,
-    });
-
-    // Optional: track performance metrics
-    import('./metrics.js')
-      .then(({ metrics }) => {
-        metrics.timing('request_duration', duration, {
-          method: req.method,
-          path: req.route?.path || req.url,
-          status: res.statusCode,
-        });
-      })
-      .catch(() => {});
+// 🧩 Error middleware
+export const errorMiddleware = (err, req, res, next) => {
+  logger.error(`${err.statusCode || 500} ${req.method} ${req.url}`, {
+    error: err.message,
+    stack: err.stack,
+    correlationId: req.correlationId,
+    userAgent: req.headers['user-agent'],
+    ip: req.ip,
   });
-
+  res.statusCode = err.statusCode || 500;
   next();
 };
 
-// ✅ Re-export logger as both named and default export for flexibility
-export { logger };
-export default logger;
+// 🚨 Global error handling
+process.on('uncaughtException', (error) => {
+  logger.error('UNCAUGHT EXCEPTION', error);
+});
 
-// 💡 Example usage helper (optional, for clarity in other files)
-// You can use the logger like this in your route handlers:
-//
-// import logger from './utils/logger.js';
-//
-// const userId = '12345';
-// const requestId = 'req-abc';
-//
-// const context = {
-//   service: 'grant-ai',
-//   ...(userId && { userId }),
-//   ...(requestId && { requestId }),
-// };
-//
-// logger.info('User action performed', context);
+process.on('unhandledRejection', (reason) => {
+  const err = reason instanceof Error ? reason : new Error(String(reason));
+  logger.error('UNHANDLED REJECTION', err);
+});
+
+export default logger;

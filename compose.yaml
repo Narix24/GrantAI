@@ -1,0 +1,10 @@
+services:
+  cookiejar:
+    image: cookiejar
+    build:
+      context: node_modules/cookiejar
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3000:3000

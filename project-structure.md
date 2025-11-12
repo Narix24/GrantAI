@@ -1,4 +1,4 @@
-﻿Project source-tree  –  generated 2025-11-07 12:29
+﻿Project source-tree  –  generated 2025-11-12 10:01
 Root: D:\Grant-AI
 ============================================================
 
@@ -7,22 +7,22 @@ Root: D:\Grant-AI
   Dockerfile                                     [✅ done]  (2025-11-02 20:07)
 
 .husky/
-  applypatch-msg                                 [✅ done]  (2025-11-07 10:03)
-  commit-msg                                     [✅ done]  (2025-11-07 10:03)
+  applypatch-msg                                 [✅ done]  (2025-11-07 15:33)
+  commit-msg                                     [✅ done]  (2025-11-07 15:33)
   h                                              [✅ done]  (2025-11-07 09:34)
-  husky.sh                                       [✅ done]  (2025-11-07 10:03)
-  post-applypatch                                [✅ done]  (2025-11-07 10:03)
-  post-checkout                                  [✅ done]  (2025-11-07 10:03)
-  post-commit                                    [✅ done]  (2025-11-07 10:03)
-  post-merge                                     [✅ done]  (2025-11-07 10:03)
-  post-rewrite                                   [✅ done]  (2025-11-07 10:03)
-  pre-applypatch                                 [✅ done]  (2025-11-07 10:03)
-  pre-auto-gc                                    [✅ done]  (2025-11-07 10:03)
-  pre-commit                                     [✅ done]  (2025-11-07 10:03)
-  pre-merge-commit                               [✅ done]  (2025-11-07 10:03)
-  prepare-commit-msg                             [✅ done]  (2025-11-07 10:03)
-  pre-push                                       [✅ done]  (2025-11-07 10:03)
-  pre-rebase                                     [✅ done]  (2025-11-07 10:03)
+  husky.sh                                       [✅ done]  (2025-11-07 15:33)
+  post-applypatch                                [✅ done]  (2025-11-07 15:33)
+  post-checkout                                  [✅ done]  (2025-11-07 15:33)
+  post-commit                                    [✅ done]  (2025-11-07 15:33)
+  post-merge                                     [✅ done]  (2025-11-07 15:33)
+  post-rewrite                                   [✅ done]  (2025-11-07 15:33)
+  pre-applypatch                                 [✅ done]  (2025-11-07 15:33)
+  pre-auto-gc                                    [✅ done]  (2025-11-07 15:33)
+  pre-commit                                     [✅ done]  (2025-11-07 15:33)
+  pre-merge-commit                               [✅ done]  (2025-11-07 15:33)
+  prepare-commit-msg                             [✅ done]  (2025-11-07 15:33)
+  pre-push                                       [✅ done]  (2025-11-07 15:33)
+  pre-rebase                                     [✅ done]  (2025-11-07 15:33)
 
 Architecture.md/
   Architecture.md                                [✅ done]  (2025-11-02 20:01)
@@ -44,7 +44,7 @@ backend/
   db.config.js                                   [✅ done]  (2025-11-02 19:43)
   i18n.config.js                                 [✅ done]  (2025-11-02 19:44)
   de.json                                        [✅ done]  (2025-11-02 19:44)
-  en.json                                        [✅ done]  (2025-11-02 19:48)
+  en.json                                        [✅ done]  (2025-11-07 14:07)
   es.json                                        [✅ done]  (2025-11-02 19:48)
   fr.json                                        [✅ done]  (2025-11-02 19:48)
   it.json                                        [✅ done]  (2025-11-02 19:48)
@@ -56,26 +56,26 @@ backend/
   adminMiddleware.js                             [✅ done]  (2025-11-05 12:16)
   chaosMonkey.js                                 [✅ done]  (2025-11-04 20:22)
   queue.js                                       [✅ done]  (2025-11-06 14:25)
-  recoveryOrchestrator.js                        [✅ done]  (2025-11-05 09:01)
+  recoveryOrchestrator.js                        [✅ done]  (2025-11-07 21:49)
   scraperWorker.js                               [✅ done]  (2025-11-02 19:51)
   submitterWorker.js                             [✅ done]  (2025-11-02 19:51)
   writerWorker.js                                [✅ done]  (2025-11-02 19:51)
   package-lock.json                              [✅ done]  (2025-11-02 22:56)
   schema.prisma                                  [✅ done]  (2025-11-02 19:32)
   auth.js                                        [✅ done]  (2025-11-05 01:53)
-  grants.js                                      [✅ done]  (2025-11-05 01:55)
-  proposals.js                                   [✅ done]  (2025-11-05 01:57)
+  grants.js                                      [✅ done]  (2025-11-07 13:24)
+  proposals.js                                   [✅ done]  (2025-11-07 15:45)
   system.js                                      [✅ done]  (2025-11-06 11:59)
-  server.js                                      [✅ done]  (2025-11-06 21:15)
+  server.js                                      [✅ done]  (2025-11-08 00:30)
   aiService.js                                   [✅ done]  (2025-11-02 19:22)
-  dbRouter.js                                    [✅ done]  (2025-11-06 13:29)
+  dbRouter.js                                    [✅ done]  (2025-11-07 23:43)
   emailService.js                                [✅ done]  (2025-11-02 20:41)
   i18nService.js                                 [✅ done]  (2025-11-05 01:36)
   langchainService.js                            [✅ done]  (2025-11-02 19:53)
   userService.js                                 [✅ done]  (2025-11-05 01:51)
   chroma.js                                      [✅ done]  (2025-11-06 15:00)
   logger.js                                      [✅ done]  (2025-11-05 01:05)
-  metrics.js                                     [✅ done]  (2025-11-02 19:54)
+  metrics.js                                     [✅ done]  (2025-11-07 14:16)
   monitoring.js                                  [✅ done]  (2025-11-05 01:59)
   redis.js                                       [✅ done]  (2025-11-06 12:43)
   security.js                                    [✅ done]  (2025-11-02 19:54)
@@ -85,6 +85,15 @@ check-and-repair-grant-ai.js/
 
 chroma-data/
   chroma.sqlite3                                 [✅ done]  (2025-11-05 09:14)
+
+clean_and_push_simple.ps1/
+  clean_and_push_simple.ps1                      [✅ done]  (2025-11-09 22:15)
+
+compose.debug.yaml/
+  compose.debug.yaml                             [✅ done]  (2025-11-11 22:28)
+
+compose.yaml/
+  compose.yaml                                   [✅ done]  (2025-11-11 22:28)
 
 create-grant-ai-structure.ps1/
   create-grant-ai-structure.ps1                  [✅ done]  (2025-11-02 20:38)
@@ -102,9 +111,9 @@ fix-everything.js/
 
 frontend/
   eslint.config.js                               [✅ done]  (2025-11-06 23:55)
-  index.html                                     [✅ done]  (2025-11-06 22:32)
+  index.html                                     [✅ done]  (2025-11-08 00:28)
   manifest.json                                  [✅ done]  (2025-11-02 20:17)
-  App.jsx                                        [✅ done]  (2025-11-07 12:08)
+  App.jsx                                        [✅ done]  (2025-11-08 01:22)
   index.js                                       [✅ done]  (2025-11-07 12:08)
   KPIDashboard.jsx                               [✅ done]  (2025-11-07 11:12)
   RealTimeMetrics.jsx                            [✅ done]  (2025-11-07 11:24)
@@ -137,16 +146,16 @@ organize-project.ps1/
   organize-project.ps1                           [✅ done]  (2025-11-02 18:37)
 
 package.json/
-  package.json                                   [✅ done]  (2025-11-07 10:21)
+  package.json                                   [✅ done]  (2025-11-08 00:41)
 
 package-lock.json/
-  package-lock.json                              [✅ done]  (2025-11-07 10:21)
+  package-lock.json                              [✅ done]  (2025-11-08 00:41)
 
 PRODUCTION_CHECKLIST.md/
   PRODUCTION_CHECKLIST.md                        [✅ done]  (2025-11-04 23:29)
 
 project_check.py/
-  project_check.py                               [✅ done]  (2025-11-07 08:52)
+  project_check.py                               [✅ done]  (2025-11-11 23:02)
 
 QA_CHECKLIST.md/
   QA_CHECKLIST.md                                [✅ done]  (2025-11-04 23:32)
@@ -158,8 +167,12 @@ requirements.txt/
   requirements.txt                               [✅ done]  (2025-11-03 09:39)
 
 scripts/
-  deploy.sh                                      [✅ done]  (2025-11-05 01:11)
+  deploy-prod.ps1                                [✅ done]  (2025-11-11 23:08)
+  deploy-prod.sh                                 [✅ done]  (2025-11-11 22:57)
   health-check.js                                [✅ done]  (2025-11-05 00:28)
+
+setup.js/
+  setup.js                                       [✅ done]  (2025-11-07 19:49)
 
 test-results/
   .last-run.json                                 [✅ done]  (2025-11-04 22:00)
@@ -225,11 +238,11 @@ update-full-project.ps1/
   update-full-project.ps1                        [✅ done]  (2025-11-06 23:09)
 
 vite.config.js/
-  vite.config.js                                 [✅ done]  (2025-11-07 12:20)
+  vite.config.js                                 [✅ done]  (2025-11-11 23:17)
 
 vitest.config.js/
   vitest.config.js                               [✅ done]  (2025-11-06 23:32)
 
 ============================================================
-Progress: 162 / 162 files contain content.
+Progress: 167 / 167 files contain content.
 
